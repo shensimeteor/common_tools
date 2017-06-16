@@ -135,7 +135,7 @@ sub tool_to_abspath{
     if ($path =~ /^\//) {
         $abspath=$path;
     }else{
-        $abspath=$cwd.$path;
+        $abspath=$cwd.'/'.$path;
     }
     return($abspath);
 }
