@@ -10,6 +10,34 @@
 #tool_outfile_ls($dir, $prefix, $postfix, $start_date12, $end_date12, $interval_minutes) #return 
 #tool_to_abspath($filepath) #return the abspath for filepath
 #on Process
+#on Arguments
+
+#$1: fill value, if nothing append to opt, then fill as fill
+sub tool_get_cmdopt{
+    my ($fill) = @_;
+    $narg = scalar(@ARGV);
+    %opt_hash = {};
+    for ($i=0; $i< $narg; $i++) {
+        if ( $ARGV[$i] =~ /^-/ ) {
+            $arg_name = $ARGV[$i];
+            $arg_name =~ s/^-//g; 
+            if ( $i < $narg - 1) {
+                $next_arg = $ARGV[$i+1];
+                if ($next_arg =~ /^-/) {
+                    $opt_hash{$arg_name} = $fill;
+                }else{
+                    $opt_hash{$arg_name} = $next_arg; 
+                }
+            } else{
+                $opt_hash{$arg_name} = $fill;
+            }
+        }
+    }
+    %opt_hash;
+}
+
+
+
 
 #get date12(yyyymmddhhMM) from (wrfout/auxhist) file name, must end with either ".nc" or no_postfix
 sub tool_outfilename_to_date12{
