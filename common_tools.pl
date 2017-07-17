@@ -123,6 +123,46 @@ sub tool_file_wait{
     $flag;
 }
 
+#if file exist & size converges & size > size_threshold, return immediately, else wait until satisfy
+sub tool_file_wait_sizeconverge{
+    my ($file, $size_threshold, $n_max_wait, $n_int_sec, $verbose) = @_;
+    my $size0;
+    my $sizex;
+    if( -e $file) {
+        @statx=stat($file);
+        $size0=$statx[7];
+    }else{
+        $size0=0;
+    }
+    if($verbose){
+        print("in tool_file_wait_sizeconverge -- \n");
+        print(" $file initial size = $size0 \n");
+    }
+    for (my $i=0; $i< $n_max_wait; $i++) {
+        if($verbose) {
+            print(" $i sleep $n_int_sec sec .. \n");
+        }
+        sleep($n_int_sec);
+        if( -e $file) {
+            @statx=stat($file); 
+            $sizex=$statx[7];
+        }else{
+            $sizex=0;
+        }
+        if($sizex == $size0 && $sizex >= $size_threshold) {
+            if($verbose){
+                print(" size converges at $sizex b, return -- \n");
+            }
+            return "True";
+        }
+        $size0=$sizex;
+    }
+    return "False";
+}
+        
+
+
+
 
 #common_date: YYYY-MM-DD HH:mm:ss
 sub tool_date12_to_commondate{ 
